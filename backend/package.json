@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/@neo-one/cli/bin/neo-one.js start network",
+    "stop": "./node_modules/@neo-one/cli/bin/neo-one.js stop network",
+    "info": "./node_modules/@neo-one/cli/bin/neo-one.js info",
+    "help": "./node_modules/@neo-one/cli/bin/neo-one.js help",
+    "build": "./node_modules/@neo-one/cli/bin/neo-one.js build",
+    "test": "jest --detectOpenHandles"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neo-one/suite": "^2.7.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@babel/preset-env": "^7.18.6",
+    "babel-jest": "^28.1.2",
+    "jest": "^28.1.2"
+  },
+  "jest":{
+    "//":"the 'roots' property below is to declare the path to be ignored when testing",
+    "roots":["./src/__tests__"]
+  }
+}

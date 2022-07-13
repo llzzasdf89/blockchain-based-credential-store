@@ -102,3 +102,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+#Neo Blockchain development Network, compiled code and mock network file
+backend/.neo-one
+backend/compiled
+backend/src/__tests__
