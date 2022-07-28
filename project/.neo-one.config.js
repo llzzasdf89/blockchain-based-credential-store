@@ -5,7 +5,7 @@ module.exports = {
     // The NEO•ONE compile command will output the compile results in this directory.
     outDir: 'neo-one/compiled',
     // NEO•ONE will look for smart contracts in this directory.
-    path: 'src/',
+    path: 'neo-one/contracts',
     // Set this to true if you want the compile command to output JSON.
     json: true,
     // Set this to true if you want the compile command to output AVM.
@@ -25,11 +25,11 @@ module.exports = {
   },
   codegen: {
     // NEO•ONE will write source artifacts to this directory. This directory should be committed.
-    path: 'compiled',
+    path: 'src/neo-one-compiled',
     // NEO•ONE will generate code in the language specified here. Can be one of 'javascript' or 'typescript'.
     language: 'javascript',
     // NEO•ONE will generate client helpers for the framework specified here. Can be one of 'react', 'angular', 'vue' or 'none'.
-    framework: 'none',
+    framework: 'react',
     // Set this to true if you're using an environment like Expo that doesn't handle browserifying dependencies automatically.
     browserify: false,
     // Set this to true if you're running in codesandbox to workaround certain limitations of codesandbox.

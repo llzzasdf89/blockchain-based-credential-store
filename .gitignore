@@ -104,6 +104,9 @@ dist
 .tern-port
 
 #Neo Blockchain development Network, compiled code and mock network file
-backend/.neo-one
-backend/compiled
-backend/src/__tests__
+project/src/__test__
+project/src/neo-one-compiled
+project/.neo-one
+
+#Mac .DS Store file
+.DS_Store
