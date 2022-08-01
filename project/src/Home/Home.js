@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {Link} from 'react-router-dom'
 import { useLocation } from "react-router-dom";
 import {requestBlockchainServer,convertNumberTobigNumber} from '../util'
+import { WithContracts } from '../neo-one-compiled';
 const checkBalance = async (addressOfAccount)=>{
     let res = await requestBlockchainServer('openwallet',['Richard.json','llzzasdf89'])
     if(!res){
@@ -17,6 +18,8 @@ function Home(props){
     const {state} = location
     //get the parameters from the navigation component, which is stored in hook function useLocation
     const [balance,setBalance] = useState({Gas:0,Neo:0})
+    const [storageContract,setstorageContract] = useState(null)
+    
     checkBalance(state._address).then((resolve)=>{
         //big number is a number class in Neonjs libary to record amount of crytocurrency.
         //Since each Neo and Gas is firstly designed as integer type <Reference: official documentation of Neo:https://docs.neo.org/docs/zh-cn/reference/rpc/latest-version/api/getnep17balances.html>
@@ -28,9 +31,14 @@ function Home(props){
             Gas:resolve[0]?convertNumberTobigNumber(resolve[0].amount):0,
             Neo:resolve[1]?convertNumberTobigNumber(resolve[1].amount):0
         })
-    })
+        //deconstruct methods from Smart Contract, which is bound in variable 'storageContract'
+    },(reject)=>console.error('The blockchain network is disconnected, please check the status of blockchain network'))
+    console.log(state)
     return <div style={{"height":300+'px'}}>
         <h1>This is the Index page</h1>
+        <WithContracts>
+            {({storage})=>setstorageContract(storage)}
+        </WithContracts>
         <div>Your balance:</div>
         <div>Neo:{balance.Neo}</div>
         <div>Gas:{balance.Gas}</div>

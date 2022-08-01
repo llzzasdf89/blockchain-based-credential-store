@@ -36,7 +36,8 @@
     "start": "./node_modules/@neo-one/cli/bin/neo-one.js build &&react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy":"tsc neo-one/migration.ts --jsx react --esModuleInterop && ./node_modules/@neo-one/cli/bin/neo-one.js deploy --network privateNetwork"
   },
   "eslintConfig": {
     "extends": [

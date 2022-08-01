@@ -1,4 +1,4 @@
-const { defaultNetworks } = require('@neo-one/cli');
+const {NEOONEProvider,LocalUserAccountProvider,LocalKeyStore,LocalMemoryStore} = require('@neo-one/client')
 
 module.exports = {
   contracts: {
@@ -27,7 +27,7 @@ module.exports = {
     // NEO•ONE will write source artifacts to this directory. This directory should be committed.
     path: 'src/neo-one-compiled',
     // NEO•ONE will generate code in the language specified here. Can be one of 'javascript' or 'typescript'.
-    language: 'javascript',
+    language: 'typescript',
     // NEO•ONE will generate client helpers for the framework specified here. Can be one of 'react', 'angular', 'vue' or 'none'.
     framework: 'react',
     // Set this to true if you're using an environment like Expo that doesn't handle browserifying dependencies automatically.
@@ -43,7 +43,24 @@ module.exports = {
   },
   // NEO•ONE will configure various parts of the CLI that require network accounts using the value provided here, for example, when deploying contracts.
   // Refer to the documentation at https://neo-one.io/docs/config-options for more information.
-  networks: defaultNetworks,
+  networks: {
+    //config to connect with private chain, instead of development chain
+    privateNetwork:{
+      userAccountProvider:async () => {
+        const keystore = new LocalKeyStore(new LocalMemoryStore());
+        await keystore.addUserAccount({
+          network:'local',
+          nep2:'6PYUnJAstCYNBZn9Uqyoc2FtD1m7n2s61yY4uHtEKe74Uv3iD2E3vny2Y2',
+          name:'Richard',
+          privateKey:'d413f024c5b344a57c995fc3e293fbfe5680fc59bc1f223409d28c38e12db60f'
+        })
+        return new LocalUserAccountProvider({
+          keystore,
+          provider: new NEOONEProvider([{ network: 'privateNetwork', rpcUrl: 'http://localhost:10332' }]),
+        });
+      }
+    }
+},
   neotracker: {
     // NEO•ONE will start an instance of NEO Tracker using this path for local data. This directory should not be committed.
     path: '.neo-one/neotracker',
