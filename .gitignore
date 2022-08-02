@@ -109,3 +109,6 @@ backend/smartContract/**/obj
 
 #Mac .DS Store file
 .DS_Store
+
+#IDE configuration
+launch.json
