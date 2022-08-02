@@ -103,10 +103,9 @@ dist
 # TernJS port file
 .tern-port
 
-#Neo Blockchain development Network, compiled code and mock network file
-project/src/__test__
-project/src/neo-one-compiled
-project/.neo-one
+#Neo Blockchain compiled code
+backend/smartContract/**/bin
+backend/smartContract/**/obj
 
 #Mac .DS Store file
 .DS_Store
