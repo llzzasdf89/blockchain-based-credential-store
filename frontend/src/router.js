@@ -9,12 +9,15 @@ import {
 import Home from './Home/Home'
 import Fileupload from './Home/Fileupload/Fileupload'
 import Login from './Login/Login'
+import Getfiles from './Home/Getfiles/Getfiles'
 const Router = 
 <BrowserRouter>
     <Routes>
-    <Route path = '/' element = {<Login></Login>}></Route>
-    <Route path = 'Home' element = {<Home></Home>}></Route>
-    <Route path = 'Fileupload' element = {<Fileupload></Fileupload>}></Route>
+    <Route index path = '/' element = {<Login></Login>}></Route>
+    <Route path = 'Home' element = {<Home></Home>}>
+            <Route path = 'Fileupload' element = {<Fileupload></Fileupload>}></Route>
+            <Route path = 'Getfiles' element = {<Getfiles></Getfiles>}></Route>
+    </Route>
     </Routes>
 </BrowserRouter>
 

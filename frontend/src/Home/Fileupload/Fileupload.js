@@ -2,12 +2,14 @@
 import {Button} from '@mui/material'
 import { create } from 'ipfs-http-client'
 import {useState} from 'react'
+import { useOutletContext } from 'react-router-dom'
+import {createInvokeContractTransaction,performTransaction} from '../../blockchain'
 const connectToIpfs = async ()=>{
     //this function serves to connect with IPFS node 
  try{
         const addr = '/ip4/127.0.0.1/tcp/5001'
         const http = create(addr)
-        const isOnline = await http.isOnline()
+        const isOnline = http.isOnline()
         if(isOnline) return http;
         return null;
     }
@@ -16,7 +18,7 @@ const connectToIpfs = async ()=>{
         return null
     }
 }
-const saveFile = async (e,set)=>{
+const saveFile = async (e,setPreviewImageUrl,setFileHash)=>{
     const file = e.target.files[0] //from the upload event, read the file object
     if(!file ) return; //no file object detected; 
     const readFile = ()=>{
@@ -49,22 +51,46 @@ const saveFile = async (e,set)=>{
     }
     const res = await saveFileToIpfs(file)
     if(!res) return console.log('save file to IPFS node error, please check ')
+    setFileHash(res)
     console.log('save file to IPFS node successful, the saved file cid(hash value) is ', res)
     const previewImageUrl = URL.createObjectURL(file) //create Url for previewImage through URL object
-    console.log(previewImageUrl)
-    set(previewImageUrl)
+    setPreviewImageUrl(previewImageUrl)
+}
+const sendFileHashToBlockchain = (account,fileHash)=>{
+    //Receive an account object to create a transaction to invoke Smart Contract function to store the file hash from IPFS
+    const invokeCall = createInvokeContractTransaction('0x73a6ed77f96d6d7e151322e7d469476fbe07fddd',account,'setfileHash',[{
+        type:"String",
+        value:account._address
+    },
+    {
+        type:"String",
+        value:fileHash
+    }
+]);
+    invokeCall.then((transaction)=> performTransaction(transaction,account).then(resolve =>{
+        console.log('perform transaction success, received transaction hash value', resolve.hash)
+    },reject=>{
+        console.log('perform transaction failed, error information ', reject)
+    })
+    ,reject=>console.error('reject',reject))
 }
 const Fileupload = (props) => {
     const [previewImageUrl,setPreviewImageUrl] = useState(null)
+    const [fileHash,setFileHash] = useState(null)
+    const [account] = useOutletContext();
     return <div>
-        <h1>upload page</h1>
         <Button variant="contained" component="label">
             Upload
         <input 
         hidden 
         accept="*" 
         type="file" 
-        onChange= {(event) => saveFile (event,setPreviewImageUrl)}
+        onChange= {(event) => {
+            saveFile (event,setPreviewImageUrl,setFileHash)
+            sendFileHashToBlockchain(account,fileHash)
+        }
+        
+        }
         />
 </Button>
     <img src={previewImageUrl} alt='preview Area'></img>

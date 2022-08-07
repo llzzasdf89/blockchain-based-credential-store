@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import Neon from '@cityofzion/neon-js'
-import {requestBlockchainServer} from '../util'
+import {requestBlockchainServer} from '../blockchain'
 import {Button,Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,TextField,Alert,Collapse,AlertTitle} from '@mui/material'
 const register = async (setdialogueOpen,setAlertObj,registerForm, setregisterForm)=>{
     setdialogueOpen({loginDialog:false,registerDialog:false})
