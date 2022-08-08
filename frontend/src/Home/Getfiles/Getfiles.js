@@ -1,6 +1,7 @@
 import { useState,useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { getFileList,convertBinaryStringToString} from '../../blockchain'
+import {Container,Table,TableContainer,TableBody,TableCell,TableHead,TableRow} from '@mui/material'
 const Getfiles = ()=>{
     const [fileList,setfileList] = useState([])
     const [account] = useOutletContext();
@@ -15,10 +16,30 @@ const Getfiles = ()=>{
      //The essential reason is that React consider the new instance as new value. Once React receives new value, it will re-render the page automatically.
      //So to avoid this, I convert the array to string to judge whether the value is actually changed.
     [JSON.stringify(fileList)])  
-    return <div>
+    return <Container>
         Your file list:
-        {(fileList === null || fileList.length === 0)? 'empty':fileList.map((item)=>convertBinaryStringToString(item.value))}
-    </div>
+        {(fileList === null || fileList.length === 0)? 'empty':fileList.map((item)=>convertBinaryStringToString(item.value)) + ","}
+        <TableContainer>
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>File Name</TableCell>
+                        <TableCell align="right">File Hash</TableCell>
+                        <TableCell align="right">Upload Time</TableCell>
+                    </TableRow>
+        </TableHead>
+        <TableBody>
+            <TableRow>
+            <TableCell component="th" scope="row">
+                1
+              </TableCell>
+              <TableCell align="right">2</TableCell>
+              <TableCell align="right">3</TableCell>
+            </TableRow>
+        </TableBody>
+            </Table>
+        </TableContainer>
+        </Container>
 }
 
 export default Getfiles

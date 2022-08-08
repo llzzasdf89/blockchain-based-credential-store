@@ -2,7 +2,7 @@ import {useState} from 'react'
 import { useNavigate } from "react-router-dom";
 import Neon from '@cityofzion/neon-js'
 import {requestBlockchainServer} from '../blockchain'
-import {Button,Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,TextField,Alert,Collapse,AlertTitle} from '@mui/material'
+import {Button,Dialog,DialogActions,DialogContent,DialogContentText,DialogTitle,TextField,Alert,AlertTitle,Container,Box,Typography} from '@mui/material'
 const register = async (setdialogueOpen,setAlertObj,registerForm, setregisterForm)=>{
     setdialogueOpen({loginDialog:false,registerDialog:false})
     const privateKey = Neon.create.privateKey() //generate private key
@@ -32,7 +32,7 @@ const register = async (setdialogueOpen,setAlertObj,registerForm, setregisterFor
     setAlert('success')
     setAlertOpen(true)
     res = await requestBlockchainServer('closewallet') //after that we need to close wallet
-    if(res) console.log('close wallet success')
+    if(res) return console.log('close wallet success')
     console.log('close wallet failed, please check whether the status of wallet file')
 }
 
@@ -43,7 +43,6 @@ const login = async (setdialogueOpen,loginForm,navigate)=>{
     //then we just judge whether this instance could be instantiated, if so, which means login success
     try{
       account = Neon.create.account(loginForm.privateKey)
-      console.log(account)
       await account.decrypt(loginForm.encryptInfo) //decrypt the privatekey first
       const {address} = account //if we could derive address from the account, then we login success
       navigate('/Home',{
@@ -71,10 +70,47 @@ const Login = () => {
     const [alertOpen, setAlertOpen] = useState(false) //switch the display of alert message
     const [alert,setAlert] = useState('success')//switch the display of alert message
     const navigate = useNavigate()//claim a navigate hook function from react router, for page direction
-    return <div>
-        Login Page
-        <div>
-        <Button variant="contained" component="label" onClick = {()=> {
+    return <Container  fixed sx={{
+          height: '100%',
+          width: '50%',
+          display:'flex',
+          flexDirection:'column',
+          alignItems:'center',
+          justifyContent:'center ',
+          padding:'30px',
+    }}>
+      <Box sx={{
+        width:"100%",
+        height:"500px",
+        display:"flex",
+        flexDirection:'column',
+        padding:'20px',
+        borderRadius:"2%",
+        border:'1px dashed #1976D2'
+      }}>
+        <Typography component="h1" variant="h5" sx={{
+          width:'100%',
+          height:'10%',
+          textAlign:'center',
+          display:'flex',
+          justifyContent:'center',
+          alignItems:'center'
+        }}>
+            Sign in
+          </Typography>
+        <Box sx={{
+          width:'100%',
+          textAlign:'center',
+          margin:"20px 0",
+          height:'45%',
+          display:'flex',
+          justifyContent:'center',
+          alignItems:'center'
+        }}>
+        <Button 
+        variant="contained" 
+        fullWidth
+        component="label" onClick = {()=> {
           setdialogueOpen({loginDialog:true,registerDialog:false})
           setloginForm({privateKey:'',encryptInfo:''})
         }}>
@@ -109,19 +145,28 @@ const Login = () => {
         </DialogActions>
         </Dialog>
 
-        </div>
-        <div>
-        <Button variant="contained" component="label" onClick ={()=>{
+        </Box>
+        <Box sx={{
+          width:'100%',
+          textAlign:'center',
+          margin:"20px 0",
+          height:'45%',
+          display:"flex",
+          justifyContent:"center",
+          alignItems:'center'
+        }}>
+        <Button variant="contained" fullWidth component="label" onClick ={()=>{
             setRegisterForm({privateKey:'',encryptInfo:''}) //each time when opening the dialogue, clear the input from last time
             setdialogueOpen({loginDialog:false,registerDialog:true})
             }}>
             Register a new private key
         </Button>
+        </Box>
         <Dialog open={dialogueOpen.registerDialog} onClose={()=> setdialogueOpen({loginDialog:false,registerDialog:false})}>
         <DialogTitle>Encrypt information</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To make sure storing private key safely in your device, please input some encrypt information and remember it.
+            To make sure safety of your private key, please input some encrypt information and remember it. We will use this information to encrypt your private key
             <br></br>For example, your name like 'John'
           </DialogContentText>
           <TextField
@@ -144,17 +189,17 @@ const Login = () => {
         </DialogActions>
 
         </Dialog>
-        <Collapse in = {alertOpen}>
+        <Dialog open = {alertOpen}>
             {alert==='success'?
             <Alert severity="success" onClose={()=> setAlertOpen(false)}>
               <AlertTitle>register private key success</AlertTitle>
-              Your private key is '{registerForm.privateKey}', and your password is '{registerForm.encryptInfo}', please remember
+              Your private key is '{registerForm.privateKey}', and your encrypt information is '{registerForm.encryptInfo}', please remember
             </Alert>:
             <Alert severity="error" onClose={()=> setAlertOpen(false)}>
                 register private key error
             </Alert>}
-        </Collapse>
-        </div>
-    </div>
+        </Dialog>
+        </Box>
+    </Container>
 }
 export default Login

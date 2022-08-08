@@ -1,7 +1,8 @@
 import { useState,useEffect} from 'react'
-import {Link, Outlet,useLocation} from 'react-router-dom'
+import {Outlet,useLocation,Link as RouterLink} from 'react-router-dom'
 import {checkBalance} from '../blockchain'
-function Home(props){
+import {Container,Typography,Box,ButtonGroup,Button} from '@mui/material'
+function Home(){
     const location = useLocation();
     //get the parameters from the navigation component, which is stored in hook function useLocation
     const {state} = location
@@ -10,18 +11,59 @@ function Home(props){
     useEffect(()=>{
         checkBalance(account._address).then(
             (resolve)=>setBalance(resolve),
-            (reject)=>console.error('The blockchain network is disconnected, please check the status of blockchain network')
+            (reject)=> console.error('Get balance error, error info is', reject)
         )
     })
-    return <div style={{"height":300+'px'}}>
-        <h1>This is the Index page</h1>
-        <div>Your account balance:<br/>{balance}</div>
-        <nav>
-        <Link to='Fileupload' > Fileupload</Link>
-        <Link to='Getfiles'>Get files</Link>
-        </nav>
+    return <Container sx={{
+        height:'100%',
+    }}>
+        <Box sx={
+            {
+                width:"100%",
+                height:'400px',
+                padding:"30px"
+            }
+        }>
+        <Box>
+                        
+        <Typography component="h5" variant="h5">Current connected blockchain is: 
+        <Typography component="span" variant="h5" sx={{
+            textDecoration:'underline',
+            fontStyle:'italic'
+        }}>test chain </Typography></Typography>
+        <br/>
+        <Typography component="h5" variant="h5" >
+            Welcome,&nbsp; user address: <br/>
+            <Typography component="span" variant="h4" sx={{
+                textDecoration:'underline'
+            }}>{account._address}</Typography>
+          </Typography>
+        </Box>
+        <Box sx={{
+            margin:"30px 0"
+        }}>
+            Your account balance is :
+            <Typography component="span" variant="body1" sx={{
+            textDecoration:'underline',
+            fontStyle:'italic'
+            }}>{balance}</Typography> Neo
+        </Box>
+
+        <Box>
+        <Box>Now you may want to:</Box>
+        <br/>
+        <Box>
+        <ButtonGroup variant="outlined" size='large'
+        >
+            <Button component={RouterLink} to='#'>Claim Gas</Button> {/*Component property could define what elements to integrate with. Details on Material UI documentation:https://mui.com/zh/material-ui/guides/composition/#component-prop. We use this to integeate with react-router navigation */}
+              <Button component={RouterLink} to='Fileupload'>upload files</Button>
+              <Button component={RouterLink} to='Getfiles'>retrive files</Button>
+        </ButtonGroup>
+        </Box>
+        </Box>
+        </Box>
         <Outlet context={[account]}></Outlet>
-    </div>
+    </Container>
 
 }
 export default Home

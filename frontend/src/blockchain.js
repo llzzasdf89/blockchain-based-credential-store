@@ -27,11 +27,12 @@ const checkBalance = async (addressOfAccount)=>{
         return
     }
     res = await requestBlockchainServer('getnep17balances',[addressOfAccount])
-    if(res.balance) {
+    if(res.balance && res.balance.length > 0 ) {
         const [balance] = res.balance
         const {amount} = balance
         return convertNumberTobigNumber(amount); //if the response contains address, then it means the query is successfull and therefore we could obtain balance
     }
+    else if (res.balance && res.balance.length === 0) return 0;
     throw new Error('obtain balance failed')
 }
 //receive a contract hash value, return the status of the corresponding contract
