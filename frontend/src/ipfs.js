@@ -17,13 +17,11 @@ const connectToIPFS = async ()=>{
         return null
     }
 }
-const saveFileToIPFS = async (file,connectedClient)=>{
-    const saveFileToIpfs = async (file) =>{ //if connection is successfully, upload the file to the node
+const saveFileToIPFS = async (fileObj,connectedClient)=>{
+    //if connection is successful, upload the file to the node
+    const sendRequest = async () =>{ 
         try {
-            console.log(file)
-            const res = await connectedClient.add(file,{
-                progress:(prog)=>console.log('received:', prog)
-            })
+            const res = await connectedClient.add(fileObj.content)
             return res.cid.toString()
         }
         catch (err){
@@ -31,7 +29,7 @@ const saveFileToIPFS = async (file,connectedClient)=>{
             return null
         }
     }
-    const res = await saveFileToIpfs(file)
+    const res = await sendRequest()
     if(!res) return console.log('save file to IPFS node error, please check ')
     return res;
 }

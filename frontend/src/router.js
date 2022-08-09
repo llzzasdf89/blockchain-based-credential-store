@@ -10,6 +10,7 @@ import Home from './Home/Home'
 import Fileupload from './Home/Fileupload/Fileupload'
 import Login from './Login/Login'
 import Getfiles from './Home/Getfiles/Getfiles'
+import Claimgas from './Home/Claimgas/Claimgas'
 const Router = 
 <BrowserRouter>
     <Routes>
@@ -17,6 +18,7 @@ const Router =
     <Route path = 'Home' element = {<Home></Home>}>
             <Route path = 'Fileupload' element = {<Fileupload></Fileupload>}></Route>
             <Route path = 'Getfiles' element = {<Getfiles></Getfiles>}></Route>
+            <Route path = 'Claimgas' element = {<Claimgas></Claimgas>}></Route>
     </Route>
     </Routes>
 </BrowserRouter>

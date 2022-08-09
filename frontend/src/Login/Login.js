@@ -50,7 +50,7 @@ const login = async (setdialogueOpen,loginForm,navigate)=>{
       }) 
     }
     catch(err){
-      console.log('your private key or your password is not valid, please check')
+      alert('your private key or your password is not valid, please check')
     }
 }
 

@@ -26,11 +26,15 @@ function Home(){
         }>
         <Box>
                         
-        <Typography component="h5" variant="h5">Current connected blockchain is: 
-        <Typography component="span" variant="h5" sx={{
-            textDecoration:'underline',
-            fontStyle:'italic'
-        }}>test chain </Typography></Typography>
+        <Typography component="h5" variant="h5"
+        sx={{
+            display:'flex',
+            justifyContent:"space-between",
+            paddingRight:"50px"
+        }}
+        >Current connected blockchain is: Test Chain
+        <Button variant='outlined' size="medium" component={RouterLink} to='/'>Logout</Button>
+        </Typography>
         <br/>
         <Typography component="h5" variant="h5" >
             Welcome,&nbsp; user address: <br/>
@@ -46,7 +50,7 @@ function Home(){
             <Typography component="span" variant="body1" sx={{
             textDecoration:'underline',
             fontStyle:'italic'
-            }}>{balance}</Typography> Neo
+            }}>{balance}</Typography> Gas
         </Box>
 
         <Box>
@@ -55,14 +59,14 @@ function Home(){
         <Box>
         <ButtonGroup variant="outlined" size='large'
         >
-            <Button component={RouterLink} to='#'>Claim Gas</Button> {/*Component property could define what elements to integrate with. Details on Material UI documentation:https://mui.com/zh/material-ui/guides/composition/#component-prop. We use this to integeate with react-router navigation */}
+            <Button component={RouterLink} to='Claimgas'>Claim Gas</Button> {/*Component property could define what elements to integrate with. Details on Material UI documentation:https://mui.com/zh/material-ui/guides/composition/#component-prop. We use this to integeate with react-router navigation */}
               <Button component={RouterLink} to='Fileupload'>upload files</Button>
               <Button component={RouterLink} to='Getfiles'>retrive files</Button>
         </ButtonGroup>
         </Box>
         </Box>
         </Box>
-        <Outlet context={[account]}></Outlet>
+        <Outlet context={[account,balance]}></Outlet>
     </Container>
 
 }

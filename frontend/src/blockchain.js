@@ -1,6 +1,9 @@
 //encapsulate some common methods,attributes to interact with blockchain
 import Neon,{tx} from '@cityofzion/neon-js'
 const NeoBlockchainRPCServer = "http://localhost:10332";
+const contractHash = '0x59a5a00db40ace763b919499de1f4d9a167ebb76' //record the smart contract hash, which has been deployed on the blockchain.
+//record the address of developer account, this is for 'Claim Gas' functionality use. To transfer gas from developer account to new registered user
+const developerAccountAddress = '0xd2a4cff31913016155e38e474a2c06d08be276cf'
 const client = Neon.create.rpcClient(NeoBlockchainRPCServer)
 const requestBlockchainServer = async (method,params)=>{
         const query = Neon.create.query({
@@ -11,7 +14,6 @@ const requestBlockchainServer = async (method,params)=>{
 }
 const convertNumberTobigNumber =(num)=>{
     //this function mainly used to convert a number to 'Big number', and left shift it for 8 digits
-
     //big number is a number class in Neonjs libary to record amount of crytocurrency.
     //Since each crytocurrency variable is firstly designed as integer type <Reference: official documentation of Neo:https://docs.neo.org/docs/zh-cn/reference/rpc/latest-version/api/getnep17balances.html>
     //for convinience, Neo designer decided to right shift this number for 8 digits:
@@ -36,8 +38,8 @@ const checkBalance = async (addressOfAccount)=>{
     throw new Error('obtain balance failed')
 }
 //receive a contract hash value, return the status of the corresponding contract
-const getcontractstate = async (contract_hash)=>{
-    let res = await requestBlockchainServer('getcontractstate',[contract_hash])
+const getcontractstate = async ()=>{
+    let res = await requestBlockchainServer('getcontractstate',[contractHash])
     if(!res) {
         console.error('getcontract state error, please check whether the contract is deployed. Or passing a wrong contract hash value?')
         return null
@@ -45,10 +47,10 @@ const getcontractstate = async (contract_hash)=>{
     return res
 }
 //invoke the function inside the deployed contract
-const invokefunctionOfContract = async (contract_hash,functionName,params = [],sender=[],useDiagnostic=false)=>{
-    let res = await getcontractstate(contract_hash)
+const invokefunctionOfContract = async (functionName,params = [],sender=[],useDiagnostic=false)=>{
+    let res = await getcontractstate(contractHash)
     if(!res) return //if contract status is error, end the function
-    res = await requestBlockchainServer('invokefunction',[contract_hash,functionName,params,sender,useDiagnostic])
+    res = await requestBlockchainServer('invokefunction',[contractHash,functionName,params,sender,useDiagnostic])
     if(!res || res.state !=='HALT') {
         console.error('invoke function failed, please check the error information')
         throw new Error(res.exception)
@@ -78,7 +80,7 @@ const setSystemFee = async (transaction)=>{
     transaction.systemFee  = Neon.u.BigInteger.fromNumber(requiredSystemFee)
     return transaction
 }
-const createInvokeContractTransaction = async(contractHash, account,functionName,functionParams = [])=>{
+const createInvokeContractTransaction = async(account,functionName,functionParams = [])=>{
     const script = Neon.create.script({
         scriptHash:contractHash,
         operation:functionName,
@@ -98,7 +100,7 @@ const createInvokeContractTransaction = async(contractHash, account,functionName
         script
     }).sign(account._privateKey)
     transaction = await setNetworkFee(transaction)
-    transaction = await setSystemFee(transaction,contractHash)
+    transaction = await setSystemFee(transaction)
     return transaction
 }
 
@@ -112,7 +114,7 @@ const performTransaction =async(transaction,account)=>{
 
 const getFileList = async(account)=>{
     //receive account object, output the file lists related to this account;
-    const res = await invokefunctionOfContract('0x73a6ed77f96d6d7e151322e7d469476fbe07fddd','getfileHash',[{
+    const res = await invokefunctionOfContract('getFile',[{
         type:"String",
         value:account._address
     }])
@@ -124,4 +126,12 @@ const getFileList = async(account)=>{
 const convertBinaryStringToString = (BinaryString)=>{
     return Neon.u.base642utf8(BinaryString)
 }
-export {requestBlockchainServer,convertNumberTobigNumber,createInvokeContractTransaction,performTransaction,checkBalance,invokefunctionOfContract,getFileList,convertBinaryStringToString}
+
+const claimgas = async (destinationAccount)=>{
+    //Claim gas functionality, default setting is to transfer 1000 gas from developer account to destination account;
+
+    const res = requestBlockchainServer('sendtoaddress',[developerAccountAddress,destinationAccount._address,100000000000])
+    console.log(res)
+    return res;
+}
+export {requestBlockchainServer,convertNumberTobigNumber,createInvokeContractTransaction,performTransaction,checkBalance,invokefunctionOfContract,getFileList,convertBinaryStringToString,claimgas}

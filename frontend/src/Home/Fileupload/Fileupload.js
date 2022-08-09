@@ -23,31 +23,43 @@ const uploadFile = async (e,setPreviewImageUrl,setFile)=>{
     }
     const fileInByteFormat = await readFileObjectAsBytes ()
     if(!fileInByteFormat) return console.error('process file to byte data error');
+    const fileObj = {
+        name:file.name,
+        content:fileInByteFormat
+    }
     const previewImageUrl = URL.createObjectURL(file) //create Url for previewImage through URL object
     setPreviewImageUrl(previewImageUrl)
-    setFile(fileInByteFormat)
+    setFile(fileObj)
 }
 
-const sendFileToIPFS = async (fileInByteFormat)=>{
+const sendFileToIPFS = async (fileObj)=>{
     const connectedClient = await connectToIPFS(); //before storing files to IPFS, we need to connect with the node first
     if(!connectedClient) {
         console.log('connect to IPFS server error, please check IPFS node status')
         return
     }
-    const res = await saveFileToIPFS(fileInByteFormat,connectedClient)
+    const res = await saveFileToIPFS(fileObj,connectedClient)
     if(!res) throw new Error('save file to IPFS node error, please check ')
     return res;
 }
 
-const createTransaction = async (account,fileHash,setfee)=>{
+const createTransaction = async (account,fileObj,fileHash,setfee)=>{
     //before save file to blockchain, we need to create a new transaction to confirm fees.
-    const transaction = await createInvokeContractTransaction('0x73a6ed77f96d6d7e151322e7d469476fbe07fddd',account,'setfileHash',[{
+    const transaction = await createInvokeContractTransaction(account,'setFile',[{
         type:"String",
         value:account._address
     },
     {
         type:"String",
+        value:fileObj.name
+    },
+    {
+        type:"String",
         value:fileHash
+    },
+    {
+        type:"Integer",
+        value:Date.now()
     }
 ]);
     if(transaction && transaction.fees){
@@ -94,7 +106,7 @@ const Fileupload = (props) => {
             maxHeight:"300px",
             maxWidth:"1000px",
             marginTop:'10px'
-        }}></img>
+        }} alt={(previewImageUrl && previewImageUrl != '')?"Does not support preview of this kind of file":'Upload a file to preview'}></img>
         <Box sx={{
             display:previewImageUrl?'block':'none'
         }}>
@@ -119,7 +131,7 @@ const Fileupload = (props) => {
                     setconfirmDialogueOpen(false)
                     sendFileToIPFS(file).then((resolveWithfileHash)=>{
                         //if send File to IPFS success, we will receive a file Hash value, so that we could use this file Hash value to create transaction to blockchain
-                        createTransaction(account,resolveWithfileHash,setfee).then((resolve)=>setTransaction(resolve),reject=> console.error('create transaction error, error info is ', reject))
+                        createTransaction(account,file,resolveWithfileHash,setfee).then((resolve)=>setTransaction(resolve),reject=> console.error('create transaction error, error info is ', reject))
                         setTimeout(()=>setconfirmFeeDialogueOpen(true),3000)
                     },reject=>{
                         console.error('Upload file to IPFS node error ,error info is ',reject)
