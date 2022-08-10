@@ -19,8 +19,10 @@ Personal final year project in the University of Manchester, which aims to build
   - IPFS client 
     - For starting IPFS node for storage of files, not included in this repository
 
+<br/>
 In one picture:
-[This is an image](./Architecture.png)
+
+![In one picture](Architecture.png)
 
 ## Requirement before running:
 Currently this project is running on a personal blockchain ;<br/>
